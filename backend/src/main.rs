@@ -1,4 +1,6 @@
 mod config;
+mod db;
+mod api;
 
 use actix_web::{App, HttpServer, middleware, web::Data};
 use diesel::{r2d2::{self, ConnectionManager}, SqliteConnection};

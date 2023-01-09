@@ -1,4 +1,5 @@
-use actix_web::{guard, web};
+use actix_web::web;
+use crate::api::post_delivery;
 
 /// This function configures the routes for the API
 ///
@@ -6,6 +7,25 @@ use actix_web::{guard, web};
 ///
 /// * `cfg`: &mut web::ServiceConfig - This is the configuration object that is used to configure the routes
 pub fn config_services(cfg: &mut web::ServiceConfig) {
+    cfg.service(
+        web::scope("/deliveries")
+            .service(
+                web::resource("")
+//                    .route(web::get().to(get_deliveries::get_deliveries))
+                    .route(web::post().to(post_delivery::post_delivery)),
+            )
+/*            .service(
+                web::scope("/{deliveryID}")
+                    .service(
+                        web::resource("")
+                            .route(web::get().to(get_delivery_by_id::get_delivery_by_id))
+                            .route(web::put().to(update_delivery_by_id::update_delivery_by_id))
+                            .route(web::delete().to(delete_delivery_by_id::delete_delivery_by_id)),
+                    )
+            )
+            */
+    );
+
     //todo: this
     /*
     cfg.service(
