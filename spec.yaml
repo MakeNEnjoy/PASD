@@ -1,0 +1,162 @@
+openapi: '3.0.2'
+info:
+  title: Disruptive Delivery API
+  version: '1.0'
+servers:
+  - url: http://localhost:8000
+
+components:
+  schemas:
+    delivery:
+      type: object
+      required:
+        - "id"
+      properties:
+        id:
+          type: integer
+        origin_address:
+          type: string
+        delivery_address:
+          type: string
+        preferred_pickup:
+          type: string
+        expected_pickup:
+          type: string
+        preferred_delivery:
+          type: string
+        expected_delivery:
+          type: string
+        status:
+          type: string
+          enum:
+            - awaiting pickup
+            - in warehouse
+            - in transit
+            - delivered
+  responses:
+    BadRequest:
+      description: Request was not well-formed, see error details.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error-message:
+                type: string
+                description: Error message detailing the problem with the request.
+    Conflict:
+      description: Conflict with current status of database.
+    NotFound:
+      description: Resource not found.
+    NoResults:
+      description: List empty; no results.
+    ServerError:
+      description: Server error; no results, try again later.
+
+paths:
+  /deliveries:
+    get:
+      description: Retrieves a list of deliveries sorted on preferred delivery, optionally filtered on status.
+      summary: Retrieve a list of deliveries.
+      parameters:
+        - name: status
+          in: query
+          description: Status of delivery to filter on.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returned a list of deliveries, optionally filtered on status.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/delivery"
+        '204':
+          $ref: "#/components/responses/NoResults"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '5XX':
+          $ref: "#/components/responses/ServerError"
+    post:
+      description: Create a new delivery.
+      summary: Create a new delivery.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/delivery"
+      responses:
+        '201':
+          description: Successfully created new delivery.
+          content:
+            application/json:
+              schema:
+                description: ID of the newly created delivery.
+                type: string
+          headers:
+            Location:
+              schema:
+                description: The URL of the newly-created delivery
+                type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '5XX':
+          $ref: '#/components/responses/ServerError'  
+
+  /deliveries/{deliveryId}:
+    parameters:
+    - name: deliveryId
+      in: path
+      required: true
+      description: The ID of the delivery.
+      schema:
+        type: integer
+    get:
+      description: Retrieves a delivery by its unique ID.
+      summary: Retrieve a delivery.
+      responses:
+        '200':
+          description: Returned the delivery matching the given ID.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/delivery"
+        '404':
+          $ref: "#/components/responses/NotFound"
+        '5XX':
+          $ref: "#/components/responses/ServerError"
+    put:
+      description: Updates a delivery by its unique ID, then returns the updated delivery.
+      summary: Update a delivery.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/delivery"
+      responses:
+        '200':
+          description: Successfully updated delivery.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/delivery"
+        '400':
+          $ref: "#/components/responses/BadRequest"
+        '404': 
+          $ref: "#/components/responses/NotFound"
+        '5XX':
+          $ref: "#/components/responses/ServerError"
+    delete:
+      description: Deletes a delivery by its unique ID.
+      summary: Delete a delivery.
+      responses:
+        '204':
+          description: Successfully deleted song.
+        '5XX':
+          $ref: '#/components/responses/ServerError'
