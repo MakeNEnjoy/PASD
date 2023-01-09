@@ -25,7 +25,19 @@ pub struct OptionalDelivery {
     pub expected_pickup: Option<String>,
     pub preferred_delivery: Option<String>,
     pub expected_delivery: Option<String>,
-    pub status: Option<String>, //fixme: rember to check status on incoming struct
+    pub status: Option<String>,
+}
+
+impl OptionalDelivery {
+    pub fn is_empty(&self) -> bool {
+        self.origin_address == None &&
+            self.delivery_address == None &&
+            self.preferred_pickup == None &&
+            self.expected_pickup == None &&
+            self.preferred_delivery == None &&
+            self.expected_delivery == None &&
+            self.status == None
+    }
 }
 
 #[derive(Serialize, Deserialize, Insertable)]
@@ -37,5 +49,5 @@ pub struct InsertableDelivery {
     pub expected_pickup: Option<String>,
     pub preferred_delivery: Option<String>,
     pub expected_delivery: Option<String>,
-    pub status: String, //fixme: rember to check status on incoming struct
+    pub status: String,
 }

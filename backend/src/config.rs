@@ -1,5 +1,5 @@
 use actix_web::web;
-use crate::api::{get_deliveries, get_delivery_by_id, post_delivery};
+use crate::api::{delete_delivery_by_id, get_deliveries, get_delivery_by_id, post_delivery, update_delivery_by_id};
 
 /// This function configures the routes for the API
 ///
@@ -19,8 +19,8 @@ pub fn config_services(cfg: &mut web::ServiceConfig) {
                     .service(
                         web::resource("")
                             .route(web::get().to(get_delivery_by_id::get_delivery_by_id))
-//                            .route(web::put().to(update_delivery_by_id::update_delivery_by_id))
-//                            .route(web::delete().to(delete_delivery_by_id::delete_delivery_by_id)),
+                            .route(web::put().to(update_delivery_by_id::update_delivery_by_id))
+                            .route(web::delete().to(delete_delivery_by_id::delete_delivery_by_id)),
                     )
             )
     );

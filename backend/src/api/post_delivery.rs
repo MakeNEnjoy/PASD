@@ -18,7 +18,7 @@ pub async fn post_delivery(
     delivery: Json<InsertableDelivery>,
 ) -> Result<HttpResponse, Error> {
     let delivery = delivery.into_inner();
-    if !vec!["awaiting pickup", "in warehouse", "in transit", "delivered"].contains(&&*delivery.status) {   //todo: rember to implement this for PUT as well
+    if !vec!["awaiting pickup", "in warehouse", "in transit", "delivered"].contains(&&*delivery.status) {
         return Ok(HttpResponse::BadRequest().body(format!("invalid status '{}'.\n", delivery.status)));
     }
 
