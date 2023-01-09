@@ -1,7 +1,7 @@
 use actix_web::{Error, HttpResponse};
 use actix_web::web::{block, Data, Json};
 use crate::{db::actions, DbPool};
-use crate::db::models::{Delivery, InsertableDelivery};
+use crate::db::models::InsertableDelivery;
 
 /// This function takes a delivery, inserts it into the database, and returns the result
 ///
@@ -18,6 +18,9 @@ pub async fn post_delivery(
     delivery: Json<InsertableDelivery>,
 ) -> Result<HttpResponse, Error> {
     let delivery = delivery.into_inner();
+    if !vec!["awaiting pickup", "in warehouse", "in transit", "delivered"].contains(&&*delivery.status) {   //todo: rember to implement this for PUT as well
+        return Ok(HttpResponse::BadRequest().body(format!("invalid status '{}'.\n", delivery.status)));
+    }
 
     let result = block(move || {
         let mut conn = pool.get()?;

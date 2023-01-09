@@ -1,5 +1,5 @@
 use actix_web::web;
-use crate::api::post_delivery;
+use crate::api::{get_deliveries, post_delivery};
 
 /// This function configures the routes for the API
 ///
@@ -11,7 +11,7 @@ pub fn config_services(cfg: &mut web::ServiceConfig) {
         web::scope("/deliveries")
             .service(
                 web::resource("")
-//                    .route(web::get().to(get_deliveries::get_deliveries))
+                    .route(web::get().to(get_deliveries::get_deliveries))
                     .route(web::post().to(post_delivery::post_delivery)),
             )
 /*            .service(

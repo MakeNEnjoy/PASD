@@ -1,6 +1,5 @@
 use diesel::SqliteConnection;
 use diesel::prelude::*;
-use log::{debug, info};
 use crate::db::schema::deliveries;
 use crate::db::DbError;
 use crate::db::models::{Delivery, InsertableDelivery};
@@ -19,10 +18,43 @@ pub fn insert_delivery(conn: &mut SqliteConnection, delivery: InsertableDelivery
     let result = diesel::insert_into(deliveries::table)
         .values(&delivery)
         .returning(deliveries::id)
-        .get_result::<Option<i32>>(conn);
+        .get_result::<i32>(conn);
+    Ok(result.unwrap())
+}
 
-    match result.unwrap() {
-        None => Err(DbError::from("Internal server error!")),
-        Some(id) => Ok(id)
+/// This function fetches existing deliveries from the database.
+///
+///
+/// Arguments:
+/// * `conn`: &mut SqliteConnection - The connection to the database
+/// * `status`: Option<String> - status to filter on
+///
+/// Returns:
+/// A Result<Option<Vec<Delivery>>, DbError>
+pub fn get_deliveries(conn: &mut SqliteConnection, status: Option<String>) -> Result<Option<Vec<Delivery>>, DbError> {
+    match status {
+        None => {
+            let deliveries = deliveries::table
+                .load::<Delivery>(conn)?;
+
+            if deliveries.is_empty() {
+                Ok(None)
+            } else {
+                Ok(Some(deliveries))
+            }
+        }
+        Some(status) => {
+            let deliveries = deliveries::table
+                .filter(deliveries::status.eq(status))
+                .load::<Delivery>(conn)?;
+
+            if deliveries.is_empty() {
+                Ok(None)
+            } else {
+                Ok(Some(deliveries))
+            }
+        }
     }
+
+
 }

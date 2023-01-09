@@ -2,13 +2,13 @@
 
 diesel::table! {
     deliveries (id) {
-        id -> Nullable<Integer>,
-        origin_address -> Nullable<Text>,
+        id -> Integer,
+        origin_address -> Text,
         delivery_address -> Text,
-        preferred_pickup -> Nullable<Text>,
-        expected_pickup -> Nullable<Text>,
-        preferred_delivery -> Nullable<Text>,
-        expected_delivery -> Nullable<Text>,
+        preferred_pickup -> Text,
+        expected_pickup -> Text,
+        preferred_delivery -> Text,
+        expected_delivery -> Text,
         status -> Text,
     }
 }
