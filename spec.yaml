@@ -9,8 +9,6 @@ components:
   schemas:
     delivery:
       type: object
-      required:
-        - "id"
       properties:
         id:
           type: integer

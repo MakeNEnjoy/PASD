@@ -55,6 +55,21 @@ pub fn get_deliveries(conn: &mut SqliteConnection, status: Option<String>) -> Re
             }
         }
     }
+}
 
-
+/// This function fetches an existing delivery from the database by id.
+///
+///
+/// Arguments:
+/// * `conn`: &mut SqliteConnection - The connection to the database
+/// * `id`: i32 - the id of the delivery to retrieve
+///
+/// Returns:
+/// A Result<Option<Delivery>, DbError>
+pub fn get_delivery_by_id(conn: &mut SqliteConnection, id: i32) -> Result<Option<Delivery>, DbError> {
+    let delivery = deliveries::table
+        .filter(deliveries::id.eq(id))
+        .first::<Delivery>(conn)
+        .optional()?;
+    Ok(delivery)
 }
