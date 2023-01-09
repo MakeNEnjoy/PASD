@@ -27,11 +27,11 @@ pub fn insert_delivery(conn: &mut SqliteConnection, delivery: InsertableDelivery
 ///
 ///
 /// Arguments:
-/// * `conn`: &mut SqliteConnection - The connection to the database
-/// * `status`: Option<String> - status to filter on
+/// * `conn`: `&mut SqliteConnection` - The connection to the database
+/// * `status`: `Option<String>` - status to filter on
 ///
 /// Returns:
-/// A Result<Option<Vec<Delivery>>, DbError>
+/// A `Result<Option<Vec<Delivery>>`, DbError>
 pub fn get_deliveries(conn: &mut SqliteConnection, status: Option<String>) -> Result<Option<Vec<Delivery>>, DbError> {
     match status {
         None => {
@@ -66,7 +66,7 @@ pub fn get_deliveries(conn: &mut SqliteConnection, status: Option<String>) -> Re
 /// * `id`: i32 - the id of the delivery to retrieve
 ///
 /// Returns:
-/// A Result<Option<Delivery>, DbError>
+/// A `Result<Option<Delivery>`, DbError>
 pub fn get_delivery_by_id(conn: &mut SqliteConnection, id: i32) -> Result<Option<Delivery>, DbError> {
     let delivery = deliveries::table
         .filter(deliveries::id.eq(id))
@@ -84,7 +84,7 @@ pub fn get_delivery_by_id(conn: &mut SqliteConnection, id: i32) -> Result<Option
 /// * `delivery`: OptionalDelivery - struct representing the fields to be updated
 ///
 /// Returns:
-/// A Result<Option<Delivery>, DbError>
+/// A `Result<Option<Delivery>`, DbError>
 pub fn update_delivery_by_id(conn: &mut SqliteConnection, id: i32, delivery: OptionalDelivery) -> Result<Delivery, DbError> {
     let result = diesel::update(deliveries::table.filter(deliveries::id.eq(id)))
         .set::<OptionalDelivery>(delivery)

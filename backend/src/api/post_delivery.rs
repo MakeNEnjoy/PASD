@@ -6,9 +6,9 @@ use crate::db::models::InsertableDelivery;
 /// This function takes a delivery, inserts it into the database, and returns the result
 ///
 /// Arguments:
-/// * `pool`: Data<DbPool> - The database connection pool.
-/// * `delivery`: Delivery - The delivery object that will be inserted into the database.
-/// * `req`: HttpRequest.
+/// * `pool`: `Data<DbPool>` - The database connection pool.
+/// * `delivery`: `Delivery` - The delivery object that will be inserted into the database.
+/// * `req`: `HttpRequest`.
 ///
 /// Returns:
 ///

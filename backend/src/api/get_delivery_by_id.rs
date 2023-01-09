@@ -5,12 +5,12 @@ use crate::{db::actions, DbPool};
 /// This function fetches and returns a delivery from the database by id.
 ///
 /// Arguments:
-/// * `pool`: Data<DbPool> - The database connection pool.
-/// * `id`: Path<i32> - if to be retrieved
+/// * `pool`: `Data<DbPool>` - The database connection pool.
+/// * `id`: `Path<i32>` - if to be retrieved
 ///
 /// Returns:
 ///
-/// A Result<HttpResponse, Error>
+/// A `Result<HttpResponse, Error>`
 pub async fn get_delivery_by_id(
     pool: Data<DbPool>,
     id: Path<i32>,

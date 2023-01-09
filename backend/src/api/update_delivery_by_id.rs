@@ -6,13 +6,13 @@ use crate::db::models::OptionalDelivery;
 /// This function updates a delivery, then returns the updated song.
 ///
 /// Arguments:
-/// * `pool`: Data<DbPool> - The database connection pool.
-/// * 'id': Query<String> - the id of the delivery to be updated.
-/// * `delivery`: Json<OptionalDelivery> - The delivery object that will be updated into the database.
+/// * `pool`: `Data<DbPool>` - The database connection pool.
+/// * 'id': `Query<String>` - the id of the delivery to be updated.
+/// * `delivery`: `Json<OptionalDelivery>` - The delivery object that will be updated into the database.
 ///
 /// Returns:
 ///
-/// A Result<HttpResponse, Error>
+/// A `Result<HttpResponse, Error>`
 pub async fn update_delivery_by_id(
     pool: Data<DbPool>,
     id: Path<i32>,

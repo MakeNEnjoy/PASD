@@ -15,9 +15,8 @@ pub struct Status {
 /// This function returns all existing deliveries in the database, filtered by status
 ///
 /// Arguments:
-/// * `pool`: Data<DbPool> - The database connection pool.
-/// * `query`: Status - status to filter on
-/// * `req`: HttpRequest.
+/// * `pool`: `Data<DbPool>` - The database connection pool.
+/// * `query`: `Status` - status to filter on
 ///
 /// Returns:
 ///
