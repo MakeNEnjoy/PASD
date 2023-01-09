@@ -1,3 +1,4 @@
+//! this module contains an update_by_id function
 use actix_web::{Error, HttpResponse};
 use actix_web::web::{block, Data, Json, Path};
 use crate::{db::actions, DbPool};

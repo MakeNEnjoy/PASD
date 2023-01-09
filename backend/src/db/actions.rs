@@ -1,3 +1,4 @@
+//! this module defines actions available on the database
 use diesel::SqliteConnection;
 use diesel::prelude::*;
 use log::info;

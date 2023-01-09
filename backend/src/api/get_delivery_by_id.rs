@@ -1,3 +1,4 @@
+//! this module contains a get_by_id function
 use actix_web::{Error, HttpResponse};
 use actix_web::web::{block, Data, Path};
 use crate::{db::actions, DbPool};

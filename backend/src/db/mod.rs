@@ -1,3 +1,4 @@
+//! this module contains everything regarding the database
 pub mod models;
 pub mod actions;
 pub mod schema;

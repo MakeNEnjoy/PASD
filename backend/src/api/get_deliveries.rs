@@ -1,3 +1,4 @@
+//! this module contains a get_deliveries
 use actix_web::{Error, HttpResponse};
 use actix_web::web::{block, Data, Query};
 use crate::{db::actions, DbPool};

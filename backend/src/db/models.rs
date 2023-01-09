@@ -1,8 +1,10 @@
+//! this module contains structs used in the backend
 use serde::{Deserialize, Serialize};
 use diesel::prelude::*;
 use crate::db::schema::*;
 
 
+///This struct represents a delivery, retrieved from the database
 #[derive(Serialize, Deserialize, Queryable)]
 #[diesel(table_name = deliveries)]
 pub struct Delivery {
@@ -16,6 +18,7 @@ pub struct Delivery {
     pub status: String,
 }
 
+///This struct represents a delivery, to be updated in the database
 #[derive(Deserialize, AsChangeset)]
 #[diesel(table_name = deliveries)]
 pub struct OptionalDelivery {
@@ -29,6 +32,7 @@ pub struct OptionalDelivery {
 }
 
 impl OptionalDelivery {
+    ///this function checks if an OptionalDelivery is empty
     pub fn is_empty(&self) -> bool {
         self.origin_address == None &&
             self.delivery_address == None &&
@@ -40,6 +44,7 @@ impl OptionalDelivery {
     }
 }
 
+///This struct represents a delivery, to be inserted into the database
 #[derive(Serialize, Deserialize, Insertable)]
 #[diesel(table_name = deliveries)]
 pub struct InsertableDelivery {

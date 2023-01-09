@@ -1,3 +1,4 @@
+//! this module configures the routes for the backend
 use actix_web::web;
 use crate::api::{delete_delivery_by_id, get_deliveries, get_delivery_by_id, post_delivery, update_delivery_by_id};
 

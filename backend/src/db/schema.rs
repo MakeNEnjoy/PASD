@@ -1,3 +1,4 @@
+//! diesel schema file
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
