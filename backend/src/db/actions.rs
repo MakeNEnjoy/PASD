@@ -77,7 +77,7 @@ pub fn get_delivery_by_id(conn: &mut SqliteConnection, id: i32) -> Result<Option
 /// Arguments:
 /// * `conn`: &mut SqliteConnection - The connection to the database
 /// * `id`: i32 - The id of the delivery to be updated
-/// * `delivery`: OptionalDelivery - struct representing the fields to be updated
+///  * `delivery`: OptionalDelivery - struct representing the fields to be updated
 ///
 /// Returns:
 /// A `Result<Option<Delivery>`, DbError>
