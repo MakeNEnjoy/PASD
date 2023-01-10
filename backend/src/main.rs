@@ -4,7 +4,6 @@ mod api;
 mod headermiddleware;
 
 use actix_web::{App, HttpServer, middleware, web::Data};
-use chrono::NaiveDate;
 use diesel::{r2d2::{self, ConnectionManager}, SqliteConnection};
 use log::{info, warn};
 

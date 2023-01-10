@@ -34,7 +34,6 @@ pub fn insert_delivery(conn: &mut SqliteConnection, delivery: InsertableDelivery
 /// Returns:
 /// A `Result<Option<Vec<Delivery>>`, DbError>
 pub fn get_deliveries(conn: &mut SqliteConnection, status: Option<String>) -> Result<Option<Vec<Delivery>>, DbError> {
-    //todo: test this one
     let mut query = deliveries::table.into_boxed();
     if let Some(status) = status {
         query = query.filter(deliveries::status.eq(status.clone()));
