@@ -1,15 +1,14 @@
-//! diesel schema file
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
     deliveries (id) {
         id -> Integer,
-        origin_address -> Text,
+        origin_address -> Nullable<Text>,
         delivery_address -> Text,
-        preferred_pickup -> Text,
-        expected_pickup -> Text,
-        preferred_delivery -> Text,
-        expected_delivery -> Text,
+        preferred_pickup -> Nullable<Timestamp>,
+        expected_pickup -> Nullable<Timestamp>,
+        preferred_delivery -> Nullable<Timestamp>,
+        expected_delivery -> Nullable<Timestamp>,
         status -> Text,
     }
 }

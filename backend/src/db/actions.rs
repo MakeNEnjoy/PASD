@@ -19,9 +19,15 @@ use crate::db::models::{Delivery, InsertableDelivery, OptionalDelivery};
 pub fn insert_delivery(conn: &mut SqliteConnection, delivery: InsertableDelivery) -> Result<i32, DbError> {
     let result = diesel::insert_into(deliveries::table)
         .values(&delivery)
-        .returning(deliveries::id)
-        .get_result::<i32>(conn);
-    Ok(result.unwrap())
+//        .returning(deliveries::id)
+//        .get_result::<i32>(conn);
+        .execute(conn)?;
+
+//    match result {
+//        Ok(r) => Ok(r),
+//        Err(e) => Err(DbError::try_from(e).unwrap())
+//    }
+    Ok(0)
 }
 
 /// This function fetches existing deliveries from the database.
@@ -34,28 +40,24 @@ pub fn insert_delivery(conn: &mut SqliteConnection, delivery: InsertableDelivery
 /// Returns:
 /// A `Result<Option<Vec<Delivery>>`, DbError>
 pub fn get_deliveries(conn: &mut SqliteConnection, status: Option<String>) -> Result<Option<Vec<Delivery>>, DbError> {
-    match status {
-        None => {
-            let deliveries = deliveries::table
-                .load::<Delivery>(conn)?;
-
-            if deliveries.is_empty() {
-                Ok(None)
-            } else {
-                Ok(Some(deliveries))
-            }
+    //todo: test this one
+    let mut query = deliveries::table.into_boxed();
+    if let Some(status) = status {
+        query = query.filter(deliveries::status.eq(status.clone()));
+        if status.eq("awaiting pickup") {
+            query = query.order(deliveries::preferred_pickup.asc());
+        } else {
+            query = query.order(deliveries::preferred_delivery.asc());
         }
-        Some(status) => {
-            let deliveries = deliveries::table
-                .filter(deliveries::status.eq(status))
-                .load::<Delivery>(conn)?;
+    } else {
+        query = query.order(deliveries::preferred_delivery.asc());
+    }
 
-            if deliveries.is_empty() {
-                Ok(None)
-            } else {
-                Ok(Some(deliveries))
-            }
-        }
+    let deliveries = query.load::<Delivery>(conn)?;
+    if deliveries.is_empty() {
+        Ok(None)
+    } else {
+        Ok(Some(deliveries))
     }
 }
 

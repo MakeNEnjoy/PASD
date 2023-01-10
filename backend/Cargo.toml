@@ -8,15 +8,12 @@ edition = "2021"
 [dependencies]
 actix-web = "4.2"
 serde = { version = "1.0", features = ["derive"] }
-erased-serde = "0.3"
 serde_json = "1.0"
-string-builder = "0.2"
 log = "0.4"
 env_logger = "0.10.0"
 diesel = { version = "2.0.0", features = ["sqlite", "chrono", "r2d2", "returning_clauses_for_sqlite_3_35"] }
 dotenvy = "0.15"
 chrono = { version = "0.4", features = ["serde"] }
-scanf = "*"
 r2d2 = "0.8.10"
 r2d2_sqlite = "0.21.0"
 futures-util = "0.3"

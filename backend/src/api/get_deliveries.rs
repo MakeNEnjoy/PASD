@@ -35,7 +35,7 @@ pub async fn get_deliveries(
         .map_err(actix_web::error::ErrorInternalServerError)?;
 
     match result {
-        Some(deliveries) => Ok(HttpResponse::Created().json(deliveries)),
+        Some(deliveries) => Ok(HttpResponse::Ok().json(deliveries)),
         None => Ok(HttpResponse::NoContent().finish())
     }
 }
