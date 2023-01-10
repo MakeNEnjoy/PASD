@@ -18,6 +18,7 @@ use crate::components::{
     update_delivery::update_delivery_page,
     update_status::update_status_page,
     update_preferred_delivery_date::update_preferred_delivery_page,
+    orders::orders_page
 };
 
 fn main_page() -> Html {
@@ -41,6 +42,7 @@ fn switch(route: Route) -> Html {
         Route::UpdateStatus { id } => update_status_page(id),
         Route::UpdatePreferredDeliveryDate { id } => update_preferred_delivery_page(id),
         Route::Customers => customer_page(),
+        Route::Orders => orders_page()
     }
 }
 
