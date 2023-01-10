@@ -4,7 +4,7 @@ use diesel::prelude::*;
 use log::info;
 use crate::db::schema::deliveries;
 use crate::db::DbError;
-use crate::db::models::{Delivery, InsertableDelivery, OptionalDelivery};
+use crate::db::models::{Delivery, Id, InsertableDelivery, OptionalDelivery};
 
 
 /// This function inserts a new delivery into the database.
@@ -16,18 +16,12 @@ use crate::db::models::{Delivery, InsertableDelivery, OptionalDelivery};
 ///
 /// Returns:
 /// A Result<Id, DbError>
-pub fn insert_delivery(conn: &mut SqliteConnection, delivery: InsertableDelivery) -> Result<i32, DbError> {
+pub fn insert_delivery(conn: &mut SqliteConnection, delivery: InsertableDelivery) -> Result<Id, DbError> {
     let result = diesel::insert_into(deliveries::table)
         .values(&delivery)
-//        .returning(deliveries::id)
-//        .get_result::<i32>(conn);
-        .execute(conn)?;
-
-//    match result {
-//        Ok(r) => Ok(r),
-//        Err(e) => Err(DbError::try_from(e).unwrap())
-//    }
-    Ok(0)
+        .returning(deliveries::id)
+        .get_result::<i32>(conn)?;
+    Ok(Id { id: result })
 }
 
 /// This function fetches existing deliveries from the database.

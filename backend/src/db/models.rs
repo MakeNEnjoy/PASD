@@ -4,6 +4,11 @@ use serde::{Deserialize, Serialize};
 use diesel::prelude::*;
 use crate::db::schema::*;
 
+///This struct models an id of a delivery.
+#[derive(Serialize)]
+pub struct Id {
+    pub id: i32,
+}
 
 ///This struct represents a delivery, retrieved from the database
 #[derive(Serialize, Deserialize, Queryable)]
