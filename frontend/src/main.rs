@@ -9,6 +9,7 @@ use crate::components::{
     deliveries::Deliveries,
     create_delivery::create_delivery_page,
     delivery_info::DeliveryInfo,
+    update_delivery::update_delivery_page
 };
 
 fn main_page() -> Html {
@@ -16,7 +17,8 @@ fn main_page() -> Html {
         <>
             <h1> {"Hello World"} </h1>
             <a href="/deliveries"> {"Deliveries"} </a> <br />
-            <a href="/create-delivery"> {"Create Delivery"} </a>
+            <a href="/create-delivery"> {"Create Delivery"} </a> <br />
+            <a href="/update-delivery"> {"Update Delivery"} </a>
         </>
     }
 }
@@ -27,6 +29,7 @@ fn switch(route: Route) -> Html {
         Route::Deliveries => html!{ <Deliveries /> },
         Route::CreateDelivery => create_delivery_page(),
         Route::Delivery { id } => html!{ <DeliveryInfo id={id} /> },
+        Route::UpdateDelivery { id } => update_delivery_page(id),
     }
 }
 

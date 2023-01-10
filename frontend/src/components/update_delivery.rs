@@ -15,6 +15,8 @@ use crate::router::Route;
 #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 struct Delivery {
+    #[serde(skip_serializing)]
+    id: Option<u32>,
     origin_address: Option<String>,
     delivery_address: Option<String>,
     preferred_pickup: Option<String>,
@@ -24,15 +26,10 @@ struct Delivery {
     status: Option<String>,
 }
 
-#[derive(Serialize, Deserialize)]
-struct DeliveryID {
-    id: u32
-}
-
 impl Delivery {
-    async fn post_request(&self) -> Result<DeliveryID, String> {
+    async fn post_request(&self) -> Result<u32, String> {
         log!("sending: {}", to_string(&self).unwrap());
-        let response = Request::post("/api/deliveries")
+        let response = Request::put(&format!("/api/deliveries/{}", self.id.unwrap()))
             .header("Content-Type", "application/json")
             .body(to_string(&self).unwrap())
             .send()
@@ -45,10 +42,15 @@ impl Delivery {
         log!("status: {}", response.status());
         log!("res: {}", &body);
         match response.status() {
-            201 => from_str(&body).map_err(|e| e.to_string()),
+            200 => from_str(&body).map_err(|e| e.to_string()),
             _ => Err("An error occurred".to_string())
         }
     }
+}
+
+#[derive(Properties, Clone, PartialEq)]
+pub struct Props {
+    pub id: u32,
 }
 
 pub enum Msg {
@@ -63,11 +65,15 @@ pub enum Msg {
 }
 
 impl Component for Delivery {
-    type Properties = ();
+    type Properties = Props;
     type Message = Msg;
 
     fn create(ctx: &Context<Self>) -> Self {
-        Delivery::default()
+        let props = ctx.props();
+        Self {
+            id: Some(props.id),
+            ..Default::default()
+        }
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
@@ -96,9 +102,10 @@ impl Component for Delivery {
                     let delivery = delivery.clone();
                     let navigator = navigator.clone();
                     e.prevent_default();
-                    delivery.post_request().await.map(|DeliveryID {id  }| {
+                    delivery.post_request().await.map(|id| {
                         let new_route = Route::Delivery{id};
                         navigator.push(&new_route);
+
                     }).unwrap_or_else(|e| {
                         log!("error: {}", e);
                     });
@@ -127,12 +134,12 @@ impl Component for Delivery {
     }
 }
 
-pub fn create_delivery_page() -> Html {
+pub fn update_delivery_page(id: u32) -> Html {
     html! {
         <div>
-            <h1> {"Create Delivery"} </h1>
+            <h1> {"Update Delivery"} </h1>
             <a href="/"> {"Home"} </a>
-            <Delivery />
+            <Delivery id = {id} />
         </div>
     }
 }

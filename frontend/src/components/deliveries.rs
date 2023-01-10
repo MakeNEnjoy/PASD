@@ -7,27 +7,28 @@ use gloo_console::log;
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct Delivery {
     id: u32,
-    origin_address: String,
-    delivery_address: String,
-    preferred_pickup: String,
-    expected_pickup: String,
-    preferred_delivery: String,
-    expected_delivery: String,
-    status: String,
+    origin_address: Option<String>,
+    delivery_address: Option<String>,
+    preferred_pickup: Option<String>,
+    expected_pickup: Option<String>,
+    preferred_delivery: Option<String>,
+    expected_delivery: Option<String>,
+    status: Option<String>,
 }
 
 impl Delivery {
     fn display_delivery(&self) -> Html {
         html!{
             <div>
-                <p> {"id: "} {&self.origin_address} </p>
-                <p> {"origin_address: "} {&self.origin_address} </p>
-                <p> {"delivery_address: "} {&self.delivery_address} </p>
-                <p> {"preferred_pickup: "} {&self.preferred_pickup} </p>
-                <p> {"expected_pickup: "} {&self.expected_pickup} </p>
-                <p> {"preferred_delivery: "} {&self.preferred_delivery} </p>
-                <p> {"expected_delivery: "} {&self.expected_delivery} </p>
-                <p> {"status: "} {&self.status} </p>
+                {"id: "} {&self.id} <br />
+                {"origin_address: "} {&self.origin_address.clone().unwrap_or_else(|| "null".to_string())} <br />
+                {"delivery_address: "} {&self.delivery_address.clone().unwrap_or_else(|| "null".to_string())} <br />
+                {"preferred_pickup: "} {&self.preferred_pickup.clone().unwrap_or_else(|| "null".to_string())} <br />
+                {"expected_pickup: "} {&self.expected_pickup.clone().unwrap_or_else(|| "null".to_string())} <br />
+                {"preferred_delivery: "} {&self.preferred_delivery.clone().unwrap_or_else(|| "null".to_string())} <br />
+                {"expected_delivery: "} {&self.expected_delivery.clone().unwrap_or_else(|| "null".to_string())} <br />
+                {"status: "} {&self.status.clone().unwrap_or_else(|| "null".to_string())} <br />
+                <br />
             </div>
         }
     }
@@ -59,15 +60,7 @@ pub fn deliveries_page() -> Html {
         use_effect_with_deps(move |_| {
             wasm_bindgen_futures::spawn_local(async move {
                 let res = get_deliveries().await;
-                match res {
-                    Ok(dels) => {
-                        log!("deliveries: {}", to_string(&dels).unwrap());
-                        deliveries.set(Ok(dels));
-                    },
-                    Err(e) => {
-                        log!("error: {}", e);
-                    }
-                }
+                deliveries.set(res);
             });
         }, ());
     }
