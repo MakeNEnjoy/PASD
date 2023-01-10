@@ -1,6 +1,7 @@
 mod config;
 mod db;
 mod api;
+mod headermiddleware;
 
 use actix_web::{App, HttpServer, middleware, web::Data};
 use diesel::{r2d2::{self, ConnectionManager}, SqliteConnection};
@@ -17,7 +18,7 @@ type DbPool = r2d2::Pool<ConnectionManager<SqliteConnection>>;
 async fn main() -> std::io::Result<()> {
     //load env variables
     dotenvy::dotenv().expect("Failed to read .env file");
-    std::env::set_var("RUST_LOG", "debug");
+    std::env::set_var("RUST_LOG", "info");
     env_logger::init();
 
     //load various things from .env
@@ -41,6 +42,7 @@ async fn main() -> std::io::Result<()> {
     //start HTTP server
     HttpServer::new(move || {
         App::new()
+            .wrap(headermiddleware::InsertCacheHeader)
             .wrap(middleware::Logger::default())
             .app_data(Data::new(pool.clone()))
             .configure(config::config_services)

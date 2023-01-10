@@ -1,20 +1,26 @@
 //! this module contains structs used in the backend
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 use diesel::prelude::*;
 use crate::db::schema::*;
 
+///This struct models an id of a delivery.
+#[derive(Serialize)]
+pub struct Id {
+    pub id: i32,
+}
 
 ///This struct represents a delivery, retrieved from the database
 #[derive(Serialize, Deserialize, Queryable)]
 #[diesel(table_name = deliveries)]
 pub struct Delivery {
     pub id: i32,
-    pub origin_address: String,
+    pub origin_address: Option<String>,
     pub delivery_address: String,
-    pub preferred_pickup: String,
-    pub expected_pickup: String,
-    pub preferred_delivery: String,
-    pub expected_delivery: String,
+    pub preferred_pickup: Option<NaiveDateTime>,
+    pub expected_pickup: Option<NaiveDateTime>,
+    pub preferred_delivery: Option<NaiveDateTime>,
+    pub expected_delivery: Option<NaiveDateTime>,
     pub status: String,
 }
 
@@ -24,10 +30,10 @@ pub struct Delivery {
 pub struct OptionalDelivery {
     pub origin_address: Option<String>,
     pub delivery_address: Option<String>,
-    pub preferred_pickup: Option<String>,
-    pub expected_pickup: Option<String>,
-    pub preferred_delivery: Option<String>,
-    pub expected_delivery: Option<String>,
+    pub preferred_pickup: Option<NaiveDateTime>,
+    pub expected_pickup: Option<NaiveDateTime>,
+    pub preferred_delivery: Option<NaiveDateTime>,
+    pub expected_delivery: Option<NaiveDateTime>,
     pub status: Option<String>,
 }
 
@@ -50,9 +56,9 @@ impl OptionalDelivery {
 pub struct InsertableDelivery {
     pub origin_address: Option<String>,
     pub delivery_address: String,
-    pub preferred_pickup: Option<String>,
-    pub expected_pickup: Option<String>,
-    pub preferred_delivery: Option<String>,
-    pub expected_delivery: Option<String>,
+    pub preferred_pickup: Option<NaiveDateTime>,
+    pub expected_pickup: Option<NaiveDateTime>,
+    pub preferred_delivery: Option<NaiveDateTime>,
+    pub expected_delivery: Option<NaiveDateTime>,
     pub status: String,
 }

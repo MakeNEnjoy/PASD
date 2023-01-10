@@ -4,7 +4,7 @@ use diesel::prelude::*;
 use log::info;
 use crate::db::schema::deliveries;
 use crate::db::DbError;
-use crate::db::models::{Delivery, InsertableDelivery, OptionalDelivery};
+use crate::db::models::{Delivery, Id, InsertableDelivery, OptionalDelivery};
 
 
 /// This function inserts a new delivery into the database.
@@ -16,12 +16,12 @@ use crate::db::models::{Delivery, InsertableDelivery, OptionalDelivery};
 ///
 /// Returns:
 /// A Result<Id, DbError>
-pub fn insert_delivery(conn: &mut SqliteConnection, delivery: InsertableDelivery) -> Result<i32, DbError> {
+pub fn insert_delivery(conn: &mut SqliteConnection, delivery: InsertableDelivery) -> Result<Id, DbError> {
     let result = diesel::insert_into(deliveries::table)
         .values(&delivery)
         .returning(deliveries::id)
-        .get_result::<i32>(conn);
-    Ok(result.unwrap())
+        .get_result::<i32>(conn)?;
+    Ok(Id { id: result })
 }
 
 /// This function fetches existing deliveries from the database.
@@ -34,28 +34,23 @@ pub fn insert_delivery(conn: &mut SqliteConnection, delivery: InsertableDelivery
 /// Returns:
 /// A `Result<Option<Vec<Delivery>>`, DbError>
 pub fn get_deliveries(conn: &mut SqliteConnection, status: Option<String>) -> Result<Option<Vec<Delivery>>, DbError> {
-    match status {
-        None => {
-            let deliveries = deliveries::table
-                .load::<Delivery>(conn)?;
-
-            if deliveries.is_empty() {
-                Ok(None)
-            } else {
-                Ok(Some(deliveries))
-            }
+    let mut query = deliveries::table.into_boxed();
+    if let Some(status) = status {
+        query = query.filter(deliveries::status.eq(status.clone()));
+        if status.eq("awaiting pickup") {
+            query = query.order(deliveries::preferred_pickup.asc());
+        } else {
+            query = query.order(deliveries::preferred_delivery.asc());
         }
-        Some(status) => {
-            let deliveries = deliveries::table
-                .filter(deliveries::status.eq(status))
-                .load::<Delivery>(conn)?;
+    } else {
+        query = query.order(deliveries::preferred_delivery.asc());
+    }
 
-            if deliveries.is_empty() {
-                Ok(None)
-            } else {
-                Ok(Some(deliveries))
-            }
-        }
+    let deliveries = query.load::<Delivery>(conn)?;
+    if deliveries.is_empty() {
+        Ok(None)
+    } else {
+        Ok(Some(deliveries))
     }
 }
 
@@ -82,7 +77,7 @@ pub fn get_delivery_by_id(conn: &mut SqliteConnection, id: i32) -> Result<Option
 /// Arguments:
 /// * `conn`: &mut SqliteConnection - The connection to the database
 /// * `id`: i32 - The id of the delivery to be updated
-/// * `delivery`: OptionalDelivery - struct representing the fields to be updated
+///  * `delivery`: OptionalDelivery - struct representing the fields to be updated
 ///
 /// Returns:
 /// A `Result<Option<Delivery>`, DbError>
