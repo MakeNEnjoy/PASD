@@ -18,13 +18,7 @@ use crate::router::Route;
 struct Delivery {
     #[serde(skip_serializing)]
     id: Option<u32>,
-    origin_address: Option<String>,
-    delivery_address: Option<String>,
-    preferred_pickup: Option<String>,
-    expected_pickup: Option<String>,
     preferred_delivery: Option<String>,
-    expected_delivery: Option<String>,
-    status: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -62,13 +56,7 @@ pub struct Props {
 
 pub enum Msg {
     UpdareDelivery,
-    UpdateOriginAddress(String),
-    UpdateDeliveryAddress(String),
-    UpdatePreferredPickup(String),
-    UpdateExpectedPickup(String),
     UpdatePreferredDelivery(String),
-    UpdateExpectedDelivery(String),
-    UpdateStatus(String),
 }
 
 impl Component for Delivery {
@@ -86,13 +74,7 @@ impl Component for Delivery {
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
         match msg {
             Msg::UpdareDelivery => (),
-            Msg::UpdateOriginAddress(value) => self.origin_address = Some(value),
-            Msg::UpdateDeliveryAddress(value) => self.delivery_address = Some(value),
-            Msg::UpdatePreferredPickup(value) => self.preferred_pickup = Some(value),
-            Msg::UpdateExpectedPickup(value) => self.expected_pickup = Some(value),
             Msg::UpdatePreferredDelivery(value) => self.preferred_delivery = Some(value),
-            Msg::UpdateExpectedDelivery(value) => self.expected_delivery = Some(value),
-            Msg::UpdateStatus(value) => self.status = Some(value),
         }
         true
     }
@@ -121,31 +103,19 @@ impl Component for Delivery {
         };
         html!{
             <form {onsubmit}>
-                <label> {"Origin Address"} </label>
-                <TextInput on_change={ctx.link().callback(Msg::UpdateOriginAddress) } /> <br />
-                <label> {"Delivery Address"} </label>
-                <TextInput on_change={ctx.link().callback(Msg::UpdateDeliveryAddress) } /> <br />
-                <label> {"Preferred Pickup"} </label>
-                <DateInput on_change={ctx.link().callback(Msg::UpdatePreferredPickup) } /> <br />
-                <label> {"Expected Pickup"} </label>
-                <DateInput on_change={ctx.link().callback(Msg::UpdateExpectedPickup) } /> <br />
                 <label> {"Preferred Delivery"} </label>
                 <DateInput on_change={ctx.link().callback(Msg::UpdatePreferredDelivery) } /> <br />
-                <label> {"Expected Delivery"} </label>
-                <DateInput on_change={ctx.link().callback(Msg::UpdateExpectedDelivery) } /> <br />
-                <label> {"Status"} </label>
-                <StatusInput on_change={ctx.link().callback(Msg::UpdateStatus) } /> <br />
-                <button type="submit" onclick={ctx.link().callback(|_| Msg::UpdareDelivery) }> {"Update Delivery"} </button>
+                <button type="submit" onclick={ctx.link().callback(|_| Msg::UpdareDelivery) }> {"Update Preerred Delivery Date"} </button>
                 <DeleteDelivery id = {self.id.unwrap()} />
             </form>
         }
     }
 }
 
-pub fn update_delivery_page(id: u32) -> Html {
+pub fn update_preferred_delivery_page(id: u32) -> Html {
     html! {
         <div>
-            <h1> {"Update Delivery"} </h1>
+            <h1> {"Update Preferred Delivery Date"} </h1>
             <a href="/"> {"Home"} </a>
             <Delivery id = {id} />
         </div>

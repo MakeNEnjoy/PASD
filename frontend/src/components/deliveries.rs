@@ -28,7 +28,8 @@ impl Delivery {
                 {"preferred_delivery: "} {&self.preferred_delivery.clone().unwrap_or_else(|| "null".to_string())} <br />
                 {"expected_delivery: "} {&self.expected_delivery.clone().unwrap_or_else(|| "null".to_string())} <br />
                 {"status: "} {&self.status.clone().unwrap_or_else(|| "null".to_string())} <br />
-                <br />
+                <a href={format!("/update-status/{}", &self.id)}> {"Update Status"} </a>
+                <br /> <br />
             </div>
         }
     }
@@ -67,6 +68,7 @@ pub fn deliveries_page() -> Html {
     match &*deliveries {
         Ok(dels) => html! {
             <div>
+                <a href="/"> {"Home"} </a> <br />
                 <h1> {"Deliveries"} </h1>
                 <ul>
                     { for dels.iter().map(|d| d.display_delivery()) }

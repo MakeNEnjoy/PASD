@@ -20,6 +20,7 @@ impl Delivery {
     fn display_delivery(&self) -> Html {
         html!{
             <div>
+                <a href="/"> {"Home"} </a> <br />
                 {"id: "} {&self.id} <br />
                 {"origin_address: "} {&self.origin_address.clone().unwrap_or_else(|| "null".to_string())} <br />
                 {"delivery_address: "} {&self.delivery_address.clone().unwrap_or_else(|| "null".to_string())} <br />
@@ -28,6 +29,7 @@ impl Delivery {
                 {"preferred_delivery: "} {&self.preferred_delivery.clone().unwrap_or_else(|| "null".to_string())} <br />
                 {"expected_delivery: "} {&self.expected_delivery.clone().unwrap_or_else(|| "null".to_string())} <br />
                 {"status: "} {&self.status.clone().unwrap_or_else(|| "null".to_string())} <br />
+                <a href={format!("/update-date/{}", &self.id)}> {"Update Preferred Delivery Date and Time"} </a>
             </div>
         }
     }

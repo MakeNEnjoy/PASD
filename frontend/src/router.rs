@@ -11,5 +11,13 @@ pub enum Route {
     #[at("/deliveries/:id")]
     Delivery {id: u32},
     #[at("/update-delivery/:id")]
-    UpdateDelivery {id: u32}
+    UpdateDelivery {id: u32},
+    #[at("/logistics")]
+    LogisticsWorker,
+    #[at("/update-status/:id")]
+    UpdateStatus {id: u32},
+    #[at("/update-date/:id")]
+    UpdatePreferredDeliveryDate {id: u32},
+    #[at("/customers")]
+    Customers
 }
