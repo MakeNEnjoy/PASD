@@ -59,7 +59,7 @@ pub struct Props {
 #[function_component(DeliveryInfo)]
 pub fn deliveriy_info_page(props: &Props) -> Html {
     let id = props.id;
-    let deliveries = use_state(|| Err("Fetching deliveries".to_string()));
+    let deliveries= use_state(|| Err("Fetching deliveries".to_string()));
     {
         let deliveries = deliveries.clone();
         use_effect_with_deps(move |_| {

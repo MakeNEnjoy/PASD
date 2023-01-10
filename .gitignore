@@ -1,5 +1,5 @@
 backend/target
 backend/.idea
 .idea
-frontend/dist/
-frontend/target/
+/frontend/dist/
+/frontend/target/
