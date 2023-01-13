@@ -16,9 +16,11 @@ use crate::components::{
     create_delivery::create_delivery_page,
     delivery_info::DeliveryInfo,
     update_delivery::update_delivery_page,
-    update_status::update_status_page,
+    update_delivery_logistics::update_delivery_logistics_page,
     update_preferred_delivery_date::update_preferred_delivery_page,
-    orders::orders_page
+    orders::orders_page,
+    create_delivery_customer::create_delivery_customer_page,
+    create_webshop_delivery::create_webshop_delivery_page,
 };
 
 fn main_page() -> Html {
@@ -39,10 +41,12 @@ fn switch(route: Route) -> Html {
         Route::UpdateDelivery { id } => update_delivery_page(id),
         Route::Delivery { id } => html!{ <DeliveryInfo id={id} /> },
         Route::LogisticsWorker => logistics_worker_page(),
-        Route::UpdateStatus { id } => update_status_page(id),
+        Route::UpdateStatus { id } => update_delivery_logistics_page(id),
         Route::UpdatePreferredDeliveryDate { id } => update_preferred_delivery_page(id),
         Route::Customers => customer_page(),
-        Route::Orders => orders_page()
+        Route::Orders => orders_page(),
+        Route::CreateDeliveryCustomer => create_delivery_customer_page(),
+        Route::MakeBid { id } => create_webshop_delivery_page(id)
     }
 }
 

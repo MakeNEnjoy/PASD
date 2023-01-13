@@ -8,29 +8,28 @@ use gloo_console::log;
 use super::text_input::{
     TextInput,
     DateInput,
-    StatusInput
 };
 use crate::router::Route;
 
 #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
-pub struct Delivery {
-    pub origin_address: Option<String>,
-    pub delivery_address: Option<String>,
-    pub preferred_pickup: Option<String>,
-    pub expected_pickup: Option<String>,
-    pub preferred_delivery: Option<String>,
-    pub expected_delivery: Option<String>,
-    pub status: Option<String>,
+struct Delivery {
+    origin_address: Option<String>,
+    delivery_address: Option<String>,
+    preferred_pickup: Option<String>,
+    expected_pickup: Option<String>,
+    preferred_delivery: Option<String>,
+    expected_delivery: Option<String>,
+    status: Option<String>,
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct DeliveryID {
-    pub id: u32
+struct DeliveryID {
+    id: u32
 }
 
 impl Delivery {
-    pub async fn post_request(&self) -> Result<DeliveryID, String> {
+    async fn post_request(&self) -> Result<DeliveryID, String> {
         log!("sending: {}", to_string(&self).unwrap());
         let response = Request::post("/api/deliveries")
             .header("Content-Type", "application/json")
@@ -51,8 +50,6 @@ impl Delivery {
     }
 }
 
-
-
 pub enum Msg {
     CreateDelivery,
     UpdateOriginAddress(String),
@@ -69,7 +66,10 @@ impl Component for Delivery {
     type Message = Msg;
 
     fn create(ctx: &Context<Self>) -> Self {
-        Delivery::default()
+        Delivery {
+            status: Some("awaiting pickup".to_string()),
+            ..Delivery::default()
+        }
     }
 
     fn update(&mut self, ctx: &Context<Self>, msg: Self::Message) -> bool {
@@ -115,25 +115,26 @@ impl Component for Delivery {
                 <TextInput on_change={ctx.link().callback(Msg::UpdateDeliveryAddress) } /> <br />
                 <label> {"Preferred Pickup"} </label>
                 <DateInput on_change={ctx.link().callback(Msg::UpdatePreferredPickup) } /> <br />
-                <label> {"Expected Pickup"} </label>
-                <DateInput on_change={ctx.link().callback(Msg::UpdateExpectedPickup) } /> <br />
+                // <label> {"Expected Pickup"} </label>
+                // <DateInput on_change={ctx.link().callback(Msg::UpdateExpectedPickup) } /> <br />
                 <label> {"Preferred Delivery"} </label>
                 <DateInput on_change={ctx.link().callback(Msg::UpdatePreferredDelivery) } /> <br />
-                <label> {"Expected Delivery"} </label>
-                <DateInput on_change={ctx.link().callback(Msg::UpdateExpectedDelivery) } /> <br />
-                <label> {"Status"} </label>
-                <StatusInput on_change={ctx.link().callback(Msg::UpdateStatus) } /> <br />
-                <button type="submit" onclick={ctx.link().callback(|_| Msg::CreateDelivery) }> {"Create Delivery"} </button>
+                // <label> {"Expected Delivery"} </label>
+                // <DateInput on_change={ctx.link().callback(Msg::UpdateExpectedDelivery) } /> <br />
+                // <label> {"Status"} </label>
+                // <StatusInput on_change={ctx.link().callback(Msg::UpdateStatus) } /> <br />
+                <button type="submit" > {"Create Delivery"} </button>
             </form>
         }
     }
 }
 
-pub fn create_delivery_page() -> Html {
+pub fn create_delivery_customer_page() -> Html {
     html! {
         <div>
             <h1> {"Create Delivery"} </h1>
             <a href="/"> {"Home"} </a>
+            <p> { "If you want to deliver the package to disruptive delivery yourself, leave the origin address and preferred pickup time blank!" } </p>
             <Delivery />
         </div>
     }

@@ -5,7 +5,7 @@ pub fn customer_page() -> Html {
     html!{
         <>
             <h1> {"Disruptive Delivery External Interface"} </h1>
-            <a href="/create-delivery"> {"Create Delivery"} </a> <br />
+            <a href="/create-delivery-customer"> {"Create Delivery"} </a> <br />
             <NavigateToDelivery />
         </>
     }

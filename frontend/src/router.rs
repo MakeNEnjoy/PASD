@@ -21,5 +21,9 @@ pub enum Route {
     #[at("/customers")]
     Customers,
     #[at("/orders")]
-    Orders
+    Orders,
+    #[at("/create-delivery-customer")]
+    CreateDeliveryCustomer,
+    #[at("/make-bid/:id")]
+    MakeBid {id: u32},
 }

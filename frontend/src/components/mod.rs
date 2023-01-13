@@ -1,10 +1,14 @@
+pub mod create_webshop_delivery;
 pub mod deliveries;
 pub mod create_delivery;
 mod text_input;
 pub mod delivery_info;
 pub mod update_delivery;
 mod delete_delivery;
-pub mod update_status;
+pub mod update_delivery_logistics;
 pub mod update_preferred_delivery_date;
 pub mod navigate_to_delivery;
 pub mod orders;
+pub mod create_delivery_customer;
+mod webshop_model;
+mod navigate_to_bidder;

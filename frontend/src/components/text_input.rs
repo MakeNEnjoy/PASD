@@ -35,6 +35,22 @@ pub fn text_input(props: &Props) -> Html {
     }
 }
 
+#[function_component(NumberInput)]
+pub fn number_input(props: &Props) -> Html {
+    let Props { on_change } = props.clone();
+
+    let oninput = Callback::from(move |input_event: InputEvent| {
+        let value = get_value_from_input_event(input_event.clone());
+        on_change.emit(value);
+    });
+
+    html! {
+        <>
+            <input type="number" {oninput} maxlength="30" />
+        </>
+    }
+}
+
 #[function_component(DateInput)]
 pub fn date_input(props: &Props) -> Html {
     let Props { on_change } = props.clone();

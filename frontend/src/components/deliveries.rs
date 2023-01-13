@@ -48,7 +48,7 @@ async fn get_deliveries() -> Result<Vec<Delivery>, String> {
     // log!("res: {}", &body);
     match response.status() {
         200 => from_str(&body).map_err(|e| e.to_string()),
-        204 => Ok(vec![]),
+        204 => Err("There are no deliveries".to_string()),
         _ => Err("An error occurred".to_string())
     }
 }
@@ -68,7 +68,7 @@ pub fn deliveries_page() -> Html {
     match &*deliveries {
         Ok(dels) => html! {
             <div>
-                <a href="/"> {"Home"} </a> <br />
+                <a href="/logistics"> {"Home"} </a> <br />
                 <h1> {"Deliveries"} </h1>
                 <ul>
                     { for dels.iter().map(|d| d.display_delivery()) }
@@ -77,7 +77,8 @@ pub fn deliveries_page() -> Html {
         },
         Err(e) => html! {
             <div>
-                <h1> {"Error when getting deliveries"} </h1>
+                <a href="/logistics"> {"Home"} </a> <br />
+                <h1> {"Deliveries"} </h1>
                 <p> {e} </p>
             </div>
         }

@@ -7,7 +7,6 @@ use reqwasm::http::Request;
 use gloo_console::log;
 use super::delete_delivery::DeleteDelivery;
 use super::text_input::{
-    TextInput,
     DateInput,
     StatusInput
 };
@@ -18,6 +17,8 @@ use crate::router::Route;
 struct Delivery {
     #[serde(skip_serializing)]
     id: Option<u32>,
+    expected_pickup: Option<String>,
+    expected_delivery: Option<String>,
     status: Option<String>,
 }
 
@@ -57,6 +58,8 @@ pub struct Props {
 pub enum Msg {
     UpdareDelivery,
     UpdateStatus(String),
+    UpdateExpectedPickup(String),
+    UpdateExpectedDelivery(String),
 }
 
 impl Component for Delivery {
@@ -75,6 +78,8 @@ impl Component for Delivery {
         match msg {
             Msg::UpdareDelivery => (),
             Msg::UpdateStatus(value) => self.status = Some(value),
+            Msg::UpdateExpectedPickup(value) => self.expected_pickup = Some(value),
+            Msg::UpdateExpectedDelivery(value) => self.expected_delivery = Some(value),
         }
         true
     }
@@ -92,7 +97,7 @@ impl Component for Delivery {
                     let navigator = navigator.clone();
                     e.prevent_default();
                     delivery.post_request().await.map(|DeliveryID{id}| {
-                        let new_route = Route::Delivery{id};
+                        let new_route = Route::Deliveries;
                         navigator.push(&new_route);
 
                     }).unwrap_or_else(|e| {
@@ -105,6 +110,10 @@ impl Component for Delivery {
             <form {onsubmit}>
                 <label> {"Status"} </label>
                 <StatusInput on_change={ctx.link().callback(Msg::UpdateStatus) } /> <br />
+                <label> {"Expected Pickup"} </label>
+                <DateInput on_change={ctx.link().callback(Msg::UpdateExpectedPickup) } /> <br />
+                <label> {"Expected Delivery"} </label>
+                <DateInput on_change={ctx.link().callback(Msg::UpdateExpectedDelivery) } /> <br />
                 <button type="submit" onclick={ctx.link().callback(|_| Msg::UpdareDelivery) }> {"Update Status"} </button>
                 <DeleteDelivery id = {self.id.unwrap()} />
             </form>
@@ -112,7 +121,7 @@ impl Component for Delivery {
     }
 }
 
-pub fn update_status_page(id: u32) -> Html {
+pub fn update_delivery_logistics_page(id: u32) -> Html {
     html! {
         <div>
             <h1> {"Update Status"} </h1>
