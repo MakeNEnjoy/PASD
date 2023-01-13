@@ -54,6 +54,7 @@ impl OptionalDelivery {
 #[derive(Serialize, Deserialize, Insertable)]
 #[diesel(table_name = deliveries)]
 pub struct InsertableDelivery {
+    pub id: Option<i32>,
     pub origin_address: Option<String>,
     pub delivery_address: String,
     pub preferred_pickup: Option<NaiveDateTime>,
