@@ -10,11 +10,25 @@ pub struct Id {
     pub id: i32,
 }
 
-///This struct represents a delivery, retrieved from the database
+///This struct represents a delivery, retrieved from the DB.
 #[derive(Serialize, Deserialize, Queryable)]
 #[diesel(table_name = deliveries)]
 pub struct Delivery {
     pub id: i32,
+    pub origin_address: Option<String>,
+    pub delivery_address: String,
+    pub preferred_pickup: Option<NaiveDateTime>,
+    pub expected_pickup: Option<NaiveDateTime>,
+    pub preferred_delivery: Option<NaiveDateTime>,
+    pub expected_delivery: Option<NaiveDateTime>,
+    pub status: String,
+}
+
+///This struct represents a delivery, to be inserted into the DB.
+#[derive(Serialize, Deserialize, Queryable, Insertable)]
+#[diesel(table_name = deliveries)]
+pub struct InsertableDelivery {
+    pub id: Option<i32>,
     pub origin_address: Option<String>,
     pub delivery_address: String,
     pub preferred_pickup: Option<NaiveDateTime>,
@@ -48,18 +62,4 @@ impl OptionalDelivery {
             self.expected_delivery == None &&
             self.status == None
     }
-}
-
-///This struct represents a delivery, to be inserted into the database
-#[derive(Serialize, Deserialize, Insertable)]
-#[diesel(table_name = deliveries)]
-pub struct InsertableDelivery {
-    pub id: Option<i32>,
-    pub origin_address: Option<String>,
-    pub delivery_address: String,
-    pub preferred_pickup: Option<NaiveDateTime>,
-    pub expected_pickup: Option<NaiveDateTime>,
-    pub preferred_delivery: Option<NaiveDateTime>,
-    pub expected_delivery: Option<NaiveDateTime>,
-    pub status: String,
 }
