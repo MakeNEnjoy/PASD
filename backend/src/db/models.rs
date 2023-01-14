@@ -15,6 +15,7 @@ pub struct Id {
 #[diesel(table_name = deliveries)]
 pub struct Delivery {
     pub id: i32,
+    pub webshop_id: Option<i32>,
     pub origin_address: Option<String>,
     pub delivery_address: String,
     pub preferred_pickup: Option<NaiveDateTime>,
@@ -28,7 +29,7 @@ pub struct Delivery {
 #[derive(Serialize, Deserialize, Queryable, Insertable)]
 #[diesel(table_name = deliveries)]
 pub struct InsertableDelivery {
-    pub id: Option<i32>,
+    pub webshop_id: Option<i32>,
     pub origin_address: Option<String>,
     pub delivery_address: String,
     pub preferred_pickup: Option<NaiveDateTime>,

@@ -3,6 +3,7 @@
 diesel::table! {
     deliveries (id) {
         id -> Integer,
+        webshop_id -> Nullable<Integer>,
         origin_address -> Nullable<Text>,
         delivery_address -> Text,
         preferred_pickup -> Nullable<Timestamp>,

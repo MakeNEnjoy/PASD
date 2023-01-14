@@ -2,6 +2,7 @@
 
 CREATE TABLE IF NOT EXISTS deliveries (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    webshop_id INTEGER,
     origin_address TEXT,
     delivery_address TEXT NOT NULL,
     preferred_pickup DATETIME,
