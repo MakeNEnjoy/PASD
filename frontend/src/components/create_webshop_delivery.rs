@@ -227,13 +227,13 @@ impl Component for OfferMaker {
                         Ok(delivery) if delivery.status == Some("REJ".to_string()) => html!{
                             <p> { "Your offer was rejected" } </p>
                         },
-                        Err(e) if e == "{\"detail\":\"Order is already being delivered\"}" => html!{
-                            <>
-                                <p> { e } </p>
-                                <p> { "Only click this button if you think the delivery is not in the Disruptive Delivery backend database." } </p> 
-                                <button onclick={ctx.link().callback(|_| Msg::ResendDelivery)}> { "Update delivery in backend" } </button>
-                            </>
-                        },
+                        // Err(e) if e == "{\"detail\":\"Order is already being delivered\"}" => html!{
+                        //     <>
+                        //         <p> { e } </p>
+                        //         <p> { "Only click this button if you think the delivery is not in the Disruptive Delivery backend database." } </p> 
+                        //         <button onclick={ctx.link().callback(|_| Msg::ResendDelivery)}> { "Update delivery in backend" } </button>
+                        //     </>
+                        // },
                         Err(e) => html!{
                             <p> { e } </p>
                         },
