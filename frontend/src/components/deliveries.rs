@@ -24,14 +24,14 @@ impl Delivery {
     fn display_delivery(&self) -> Html {
         html!{
             <div>
-                {"id: "} {&self.id} <br />
+                // {"id: "} {&self.id} <br />
                 {"origin_address: "} {&self.origin_address.clone().unwrap_or_else(|| "null".to_string())} <br />
                 {"delivery_address: "} {&self.delivery_address.clone().unwrap_or_else(|| "null".to_string())} <br />
                 {"preferred_pickup: "} {&self.preferred_pickup.clone().unwrap_or_else(|| "null".to_string())} <br />
                 {"expected_pickup: "} {&self.expected_pickup.clone().unwrap_or_else(|| "null".to_string())} <br />
                 {"preferred_delivery: "} {&self.preferred_delivery.clone().unwrap_or_else(|| "null".to_string())} <br />
                 {"expected_delivery: "} {&self.expected_delivery.clone().unwrap_or_else(|| "null".to_string())} <br />
-                {"webshop_id: "} {&self.webshop_id.clone().map_or("null".to_string(), |id| id.to_string())} <br />
+                // {"webshop_id: "} {&self.webshop_id.clone().map_or("null".to_string(), |id| id.to_string())} <br />
                 {"status: "} {&self.status.clone().unwrap_or_else(|| "null".to_string())} <br />
                 if let Some(webshop_id) = &self.webshop_id {
                     <a href={format!("/update-status/{}?webshop_id={}", &self.id, webshop_id)}> {"Update Status"} </a> <br />
@@ -39,7 +39,7 @@ impl Delivery {
                         if Some("EXP".to_string()) == webshop_delivery.status {
                             <a href={format!("/create-label/{}", webshop_id)}> {"Label needs to be uploaded!"} </a> <br />
                         } else {
-                            {"webshop_delivery: "} {webshop_delivery.status.clone().unwrap()}
+                            // {"webshop_delivery: "} {webshop_delivery.status.clone().unwrap()}
                         }
                     } else {
                         { "Can't find delivery in webshop!" }
@@ -80,7 +80,8 @@ pub fn deliveries_page() -> Html {
             wasm_bindgen_futures::spawn_local(async move {
                 let mut res = get_deliveries().await;
                 if let Ok(ref mut dels) = res {
-                    for del in dels.iter_mut() {
+                    let dels_filter = dels.iter_mut().filter(|d| d.status != Some("delivered".to_string()));
+                    for del in dels_filter {
                         if let Some(webshop_id) = del.webshop_id {
                             del.webshop_delivery = WebShopDelivery::get_delivery(webshop_id).await.ok();
                         }

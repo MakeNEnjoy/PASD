@@ -52,8 +52,6 @@ impl Delivery {
     }
 }
 
-
-
 pub enum Msg {
     CreateDelivery,
     UpdateOriginAddress(String),
@@ -63,6 +61,7 @@ pub enum Msg {
     UpdatePreferredDelivery(String),
     UpdateExpectedDelivery(String),
     UpdateStatus(String),
+    UpdateWebShopID(String),
 }
 
 impl Component for Delivery {
@@ -83,6 +82,7 @@ impl Component for Delivery {
             Msg::UpdatePreferredDelivery(value) => self.preferred_delivery = Some(value),
             Msg::UpdateExpectedDelivery(value) => self.expected_delivery = Some(value),
             Msg::UpdateStatus(value) => self.status = Some(value),
+            Msg::UpdateWebShopID(value) => self.webshop_id = Some(value.parse().unwrap()),
         }
         true
     }
@@ -95,6 +95,7 @@ impl Component for Delivery {
             Callback::from(move |e: SubmitEvent| {
                 let navigator = navigator.clone();
                 let delivery = delivery.clone();
+                log!("delivery: {:?}", to_string(&delivery).unwrap());
                 wasm_bindgen_futures::spawn_local(async move {
                     let delivery = delivery.clone();
                     let navigator = navigator.clone();
@@ -124,6 +125,8 @@ impl Component for Delivery {
                 <DateInput on_change={ctx.link().callback(Msg::UpdateExpectedDelivery) } /> <br />
                 <label> {"Status"} </label>
                 <StatusInput on_change={ctx.link().callback(Msg::UpdateStatus) } /> <br />
+                <label> {"Webshop ID"} </label>
+                <TextInput on_change={ctx.link().callback(Msg::UpdateWebShopID) } /> <br />
                 <button type="submit" onclick={ctx.link().callback(|_| Msg::CreateDelivery) }> {"Create Delivery"} </button>
             </form>
         }

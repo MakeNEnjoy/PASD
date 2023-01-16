@@ -45,6 +45,7 @@ impl Order {
     pub fn display(&self) -> Html {
         html!{
             <>
+                // {"id: "} {self.id.clone()} <br />
                 {"send_date: "} {self.send_date.clone()} <br />
                 {"x_in_mm: "} {self.x_in_mm.clone()} <br />
                 {"y_in_mm: "} {self.y_in_mm.clone()} <br />

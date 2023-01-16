@@ -3,3 +3,4 @@ backend/.idea
 .idea
 /frontend/dist/
 /frontend/target/
+/webshop_get_all_deliveries/
