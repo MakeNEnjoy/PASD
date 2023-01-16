@@ -26,4 +26,6 @@ pub enum Route {
     CreateDeliveryCustomer,
     #[at("/make-bid/:id")]
     MakeBid {id: u32},
+    #[at("/create-label/:id")]
+    CreateLabel {id: u32},
 }

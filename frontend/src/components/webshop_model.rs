@@ -24,7 +24,7 @@ impl Person {
         }
     }
     pub fn address(&self) -> String {
-        format!("{} {} {} {} {}", self.name.clone(), self.street_and_number.clone(), self.zipcode.clone(), self.city.clone(), self.country.clone())
+        format!("{} {} {} {}", self.street_and_number.clone(), self.zipcode.clone(), self.city.clone(), self.country.clone())
     }
 }
 

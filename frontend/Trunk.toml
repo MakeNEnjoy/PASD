@@ -4,3 +4,4 @@ backend = "http://localhost:8000/"
 [[proxy]]
 rewrite = "/webshop/"
 backend = "https://pasd-webshop-API.onrender.com/"
+# backend = "http://localhost:3682"

@@ -21,6 +21,7 @@ use crate::components::{
     orders::orders_page,
     create_delivery_customer::create_delivery_customer_page,
     create_webshop_delivery::create_webshop_delivery_page,
+    create_label::create_label_page,
 };
 
 fn main_page() -> Html {
@@ -46,7 +47,8 @@ fn switch(route: Route) -> Html {
         Route::Customers => customer_page(),
         Route::Orders => orders_page(),
         Route::CreateDeliveryCustomer => create_delivery_customer_page(),
-        Route::MakeBid { id } => create_webshop_delivery_page(id)
+        Route::MakeBid { id } => create_webshop_delivery_page(id),
+        Route::CreateLabel { id } => create_label_page(id),
     }
 }
 

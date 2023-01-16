@@ -40,8 +40,6 @@ fn orders_page() -> Html {
     match &*orders {
         Ok(webshop_model::Orders{orders}) => html! {
             <div>
-                <a href="/"> {"Home"} </a> <br />
-                <h1> {"Deliveries"} </h1>
                 <ul>
                     { for orders.iter().map(|d| d.display()) }
                 </ul>
@@ -49,7 +47,6 @@ fn orders_page() -> Html {
         },
         Err(e) => html! {
             <div>
-                <h1> {"Error when getting orders"} </h1>
                 <p> {e} </p>
             </div>
         }
@@ -59,6 +56,7 @@ fn orders_page() -> Html {
 pub fn orders_page() -> Html {
     html!{
         <>
+            <a href="/logistics"> {"Home"} </a> <br />
             <h1> {"Web shop orders"} </h1>
             <OrdersList />
         </>

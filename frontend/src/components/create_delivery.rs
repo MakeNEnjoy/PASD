@@ -21,6 +21,7 @@ pub struct Delivery {
     pub expected_pickup: Option<String>,
     pub preferred_delivery: Option<String>,
     pub expected_delivery: Option<String>,
+    pub webshop_id: Option<u32>,
     pub status: Option<String>,
 }
 

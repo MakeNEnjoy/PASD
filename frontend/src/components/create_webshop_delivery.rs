@@ -22,13 +22,32 @@ pub struct WebShopDelivery {
     pub status: Option<String>,
     pub id: u32
 }
+impl WebShopDelivery {
+    pub async fn get_delivery(id: u32) -> Result<WebShopDelivery, String> {
+        let response = Request::get(&format!("/webshop/api/delivery/{}", id))
+            .header("x-api-key", "46XiHoFBHG7sViWGTx7a")
+            .send()
+            .await
+            .map_err(|e| e.to_string())?;
+        let body = response
+            .text()
+            .await
+            .map_err(|e| e.to_string())?;
+        log!("status: {}", response.status());
+        log!("res: {}", &body);
+        match response.status() {
+            200 => from_str(&body).map_err(|e| e.to_string()),
+            _ => Err("An error occurred".to_string())
+        }
+    }
+}
 
 #[skip_serializing_none]
 #[derive(Serialize, Deserialize, Debug, Clone, Default)]
 pub struct Offer {
     pub price_in_cents: Option<u32>,
     pub expected_delivery_datetime: Option<String>,
-    pub order_id: Option<u32>,
+    pub order_id: u32,
 }
 
 #[derive(Clone)]
@@ -37,7 +56,7 @@ struct OfferMaker {
     offer: Offer,
     pickup_address: String,
     delivery_address: String,
-    delivery: Option<WebShopDelivery>,
+    delivery: Result<WebShopDelivery, String>,
 }
 
 impl Offer {
@@ -62,39 +81,52 @@ impl Offer {
         log!("res: {}", &body);
         match response.status() {
             200 => from_str(&body).map_err(|e| e.to_string()),
-            _ => Err("An error occurred".to_string())
+            _ => Err(body)
         }
     }
 }
 
 impl OfferMaker {
-    fn handle_new_delivery(&mut self, delivery: WebShopDelivery, ctx: &Context<Self>) {
-        log!("current delivery info: {}", to_string(&self.delivery).unwrap());
-        log!("handling delivery: {}", to_string(&delivery).unwrap());
-        let expected_delivery = self.offer.expected_delivery_datetime.clone();
-        self.delivery = Some(delivery.clone());
-        if delivery.status == Some("EXP".to_string()) {
-            let offer_maker = self.clone();
-            let navigator = ctx.link().navigator().unwrap();
-            wasm_bindgen_futures::spawn_local(async move {
-                Delivery {
-                    origin_address: Some(offer_maker.pickup_address),
-                    delivery_address: Some(offer_maker.delivery_address),
-                    preferred_pickup: None,
-                    preferred_delivery: None,
-                    expected_pickup: offer_maker.expected_pickup,
-                    expected_delivery: expected_delivery,
-                    status: Some("awaiting pickup".to_string()),
-                }.post_request().await.map(|DeliveryID {id  }| {
-                        navigator.push(&Route::Deliveries);
-                    }).unwrap_or_else(|e| {
-                        log!("error: {}", e);
-                    });
-
-            });
-
+    fn handle_new_delivery(&mut self, delivery: Result<WebShopDelivery, String>, ctx: &Context<Self>) {
+        log!("current delivery info: {}", to_string(&self.delivery).unwrap_or("None".to_string()));
+        self.delivery = delivery.clone();
+        if let Ok(delivery) = delivery {
+            log!("handling delivery: {}", to_string(&delivery).unwrap());
+            let expected_delivery = self.offer.expected_delivery_datetime.clone();
+            if delivery.status == Some("EXP".to_string()) {
+                let offer_maker = self.clone();
+                let navigator = ctx.link().navigator().unwrap();
+                wasm_bindgen_futures::spawn_local(async move {
+                    Delivery {
+                        origin_address: Some(offer_maker.pickup_address),
+                        delivery_address: Some(offer_maker.delivery_address),
+                        preferred_pickup: None,
+                        preferred_delivery: None,
+                        webshop_id: Some(delivery.id),
+                        expected_pickup: offer_maker.expected_pickup,
+                        expected_delivery: expected_delivery,
+                        status: Some("awaiting pickup".to_string()),
+                    }.post_request().await.map(|DeliveryID {id  }| {
+                            // navigator.push(&Route::Deliveries);
+                            log!("delivery successfully created: {}", id);
+                        }).unwrap_or_else(|e| {
+                            log!("error: {}", e);
+                        });
+                });
+            }
         }
     }
+
+
+    fn resend_delivery_to_backend(&self, ctx: &Context<Self>) {
+        let id = self.offer.order_id;
+        let callback = ctx.link().callback(Msg::UpdateDelivery);
+        wasm_bindgen_futures::spawn_local(async move {
+            let delivery = WebShopDelivery::get_delivery(id).await;
+            callback.emit(delivery);
+        });
+    }
+        
 }
 
 #[derive(Clone, Properties, PartialEq)]
@@ -106,7 +138,8 @@ pub enum Msg {
     UpdatePrice(u32),
     UpdateExpectedDelivery(String),
     UpdateExpectedPickup(String),
-    UpdateDelivery(WebShopDelivery),
+    UpdateDelivery(Result<WebShopDelivery, String>),
+    ResendDelivery,
 }
 
 impl Component for OfferMaker {
@@ -118,14 +151,14 @@ impl Component for OfferMaker {
         let addresses = location.query::<AddressQuery>().unwrap();
         OfferMaker {
             offer: Offer {
-                order_id: Some(ctx.props().order_id),
+                order_id: ctx.props().order_id,
                 
                 ..Default::default()
             },
             pickup_address: addresses.pickup_address,
             delivery_address: addresses.delivery_address,
             expected_pickup: None,
-            delivery: None
+            delivery: Err("No offer made yet".to_string())
         }
     }
 
@@ -135,6 +168,7 @@ impl Component for OfferMaker {
             Msg::UpdateExpectedDelivery(date) => self.offer.expected_delivery_datetime = Some(date),
             Msg::UpdateExpectedPickup(date) => self.expected_pickup = Some(date),
             Msg::UpdateDelivery(delivery) => self.handle_new_delivery(delivery, ctx),
+            Msg::ResendDelivery => self.resend_delivery_to_backend(ctx),
         };
         true
     }
@@ -155,15 +189,10 @@ impl Component for OfferMaker {
                     let offer = offer.clone();
                     let update_delivery = update_delivery.clone();
                     let navigator = navigator.clone();
-                    offer.post_make_bid().await.map(|delivery| {
-                        update_delivery.emit(delivery);
-                    }).unwrap_or_else(|e| {
-                        log!("error: {}", e);
-                    });
+                    update_delivery.emit(offer.post_make_bid().await);
                 });
             })
         };
-
         
         let on_change_price = {
             let update_price = ctx.link().callback(Msg::UpdatePrice);
@@ -171,6 +200,7 @@ impl Component for OfferMaker {
                 update_price.emit(price.parse().unwrap());
             })
         };
+
 
         html!{
             <>
@@ -185,11 +215,32 @@ impl Component for OfferMaker {
                     <DateInput on_change={ctx.link().callback(Msg::UpdateExpectedDelivery)} /><br />
                     <input type="submit" value="Submit" />
                 </form>
-                if let Some(delivery) = &self.delivery {
-                    if delivery.status == Some("REJ".to_string()) {
-                        <p> { "Your offer was rejected" } </p>
+                <h2> { "Offer status" } </h2>
+                {
+                    match &self.delivery {
+                        Ok(delivery) if delivery.status == Some("EXP".to_string()) => html!{
+                            <>
+                                <p> { "Your offer was accepted" } </p>
+                                <a href="/deliveries"> { "Go to current deliveries" } </a>
+                            </>
+                        },
+                        Ok(delivery) if delivery.status == Some("REJ".to_string()) => html!{
+                            <p> { "Your offer was rejected" } </p>
+                        },
+                        Err(e) if e == "{\"detail\":\"Order is already being delivered\"}" => html!{
+                            <>
+                                <p> { e } </p>
+                                <p> { "Only click this button if you think the delivery is not in the Disruptive Delivery backend database." } </p> 
+                                <button onclick={ctx.link().callback(|_| Msg::ResendDelivery)}> { "Update delivery in backend" } </button>
+                            </>
+                        },
+                        Err(e) => html!{
+                            <p> { e } </p>
+                        },
+                        _ => html!{
+                            <p> { "Unexpected status" } </p>
+                        }
                     }
-                
                 }
             </>
         }
@@ -201,6 +252,7 @@ impl Component for OfferMaker {
 pub fn create_webshop_delivery_page(id: u32) -> Html {
     html! {
         <>
+            <a href="/orders"> { "Back to orders" } </a>
             <h1> { "Make an offer" } </h1>
             <OfferMaker order_id={id} />
         </>

@@ -1,7 +1,9 @@
+pub mod create_label;
 pub mod create_webshop_delivery;
 pub mod deliveries;
 pub mod create_delivery;
 mod text_input;
+mod file_input;
 pub mod delivery_info;
 pub mod update_delivery;
 mod delete_delivery;
