@@ -34,11 +34,10 @@ impl Delivery {
                 {"webshop_id: "} {&self.webshop_id.clone().map_or("null".to_string(), |id| id.to_string())} <br />
                 {"status: "} {&self.status.clone().unwrap_or_else(|| "null".to_string())} <br />
                 if let Some(webshop_id) = &self.webshop_id {
-                    // <a href={format!("/create-label/{}", webshop_id)}> {"Create Label"} </a> <br />
                     <a href={format!("/update-status/{}?webshop_id={}", &self.id, webshop_id)}> {"Update Status"} </a> <br />
                     if let Some(webshop_delivery) = &self.webshop_delivery {
                         if Some("EXP".to_string()) == webshop_delivery.status {
-                            <a href={format!("/create-label/{}", &self.id)}> {"Label needs to be uploaded!"} </a> <br />
+                            <a href={format!("/create-label/{}", webshop_id)}> {"Label needs to be uploaded!"} </a> <br />
                         } else {
                             {"webshop_delivery: "} {webshop_delivery.status.clone().unwrap()}
                         }
@@ -97,7 +96,13 @@ pub fn deliveries_page() -> Html {
                 <a href="/logistics"> {"Home"} </a> <br />
                 <h1> {"Deliveries"} </h1>
                 <ul>
-                    { for dels.iter().map(|d| d.display_delivery()) }
+                    { for dels.iter().map(|d| {
+                        if d.status != Some("delivered".to_string()) {
+                            d.display_delivery()
+                        } else {
+                            html! {}
+                        }
+                    }) }
                 </ul>
             </div>
         },
