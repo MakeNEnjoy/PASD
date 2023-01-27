@@ -1,6 +1,6 @@
 openapi: '3.0.2'
 info:
-  title: Disruptive Delivery API
+  title: Disruptive Delivery InternalAPI
   version: '1.0'
 servers:
   - url: http://localhost:8000
